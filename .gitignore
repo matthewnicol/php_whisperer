@@ -1,0 +1,10 @@
+MANIFEST
+build
+dist
+*~
+*.pyc
+.kdev4/
+.idea
+*.iml
+*.xml
+venv
