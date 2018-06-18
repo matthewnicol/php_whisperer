@@ -1,21 +1,34 @@
-class Positioning:
-    NEXT_SIBLING, PREVIOUS_SIBLING = range(2)
-
-def manipulate_array(array, operation, new_value):
-    pass
+"""
+Tools for manipulating PHP arrays that have been parsed into python.
+"""
 
 
 def extract_tree(array, extraction_path):
+    """
+    Pull a tree out from a python list or dictionary. Return that tree
+    :param array: A Python list or dictionary
+    :param extraction_path:  "level1.level2.0.3.level5" <-- map for traversing the array
+    :return: The subtree at the path
+    """
     path = extraction_path.split(".")
     cursor = array
     for loc in path:
+        # Handle extraction if this tree is an ordered array
         if all([x in "0123456789" for x in loc]):
             cursor = cursor[int(loc)]
+        # Handle extraction if this tree is an associative array
         else:
             cursor = cursor[loc]
     return cursor
 
+
 def erase_tree(array, extraction_path):
+    """
+
+    :param array: A Python list or dictionary
+    :param extraction_path: "level1.level2.0.3.level5" <-- map for traversing the array
+    :return: None
+    """
     if isinstance(extraction_path, str):
         extraction_path = extraction_path.split(".")
     loc = extraction_path[0]
