@@ -98,3 +98,9 @@ def generate_array(list_or_array, indent=2, last_level=0):
     parts.append('%s)' % (end_bracket_spaces))
 
     return '\n'.join(parts) + (";" if last_level == 0 else "")
+
+def generate_php(list_or_array, *, variable=None):
+    if variable:
+        return f"${variable} = " + generate_array(list_or_array)
+    else:
+        return generate_array(list_or_array)
