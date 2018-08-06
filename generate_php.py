@@ -1,7 +1,7 @@
 """
 Convert python dicts and lists into PHP arrays
 """
-
+import re
 
 # This existed in langutil along with a lot of other crap.
 # I've cut most of it out but I'm not sure if this is needed yet.
@@ -99,8 +99,17 @@ def generate_array(list_or_array, indent=2, last_level=0):
 
     return '\n'.join(parts) + (";" if last_level == 0 else "")
 
-def generate_php(list_or_array, *, variable=None):
+def generate_php(list_or_array, *, variable=None, modern=False, return_=None):
+    data = generate_array(list_or_array)
+    if modern:
+        data = data.replace("),\n", "],\n")
+        data = data.replace(");", "];")
+        data = re.sub(r'=>.*\n.*?array \(', "=> [", data, flags=re.MULTILINE)
+        data = data.replace('array (', '[')
+
     if variable:
-        return f"${variable} = " + generate_array(list_or_array)
+        return f"${variable} = " + data
+    elif return_:
+        return f"return " + data
     else:
         return generate_array(list_or_array)
