@@ -24,3 +24,15 @@ def read_php(php_filename, *, variable=None):
             initial_definition = '';
         result = check_output(['php', '-r', f'{initial_definition} include "{php_filename}"; echo json_encode(${variable});'])
     return json.loads(result)
+
+def combine_and_read(filenames, *, variable):
+    """
+    Given a list of php filenames, include them in the document and then capture the variable output.
+    :type filenames: list
+    :type variable: str
+    :return: list|dict
+    """
+    initial_definition = '';
+    result = check_output(['php', '-r', f'{initial_definition} ' + " ".join([
+        'include "{fn}";' for fn in filenames]) + ' echo json_encode(${variable});'])
+
