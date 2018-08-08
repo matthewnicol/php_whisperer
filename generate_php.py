@@ -112,4 +112,4 @@ def generate_php(list_or_array, *, variable=None, modern=False, return_=None):
     elif return_:
         return f"return " + data
     else:
-        return generate_array(list_or_array)
+        return data
