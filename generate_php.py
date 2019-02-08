@@ -9,6 +9,8 @@ _CNTRL_CHARS = map(chr, list(range(0x0, 0x1f)) + [0x7f])
 
 
 def _has_cntrl_chars(val):
+    if isinstance(val, int):
+        return False
     for char in val:
         if char in _CNTRL_CHARS:
             return True
