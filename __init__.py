@@ -1,4 +1,5 @@
 #!/usr/bin/env python36
-from .read_php import read_php
+name = "php_whisperer"
+from .read_php import read_php, read_many, alter_source_and_read_php
 from .generate_php import generate_php
 
