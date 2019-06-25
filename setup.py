@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="php_whisperer",
-        version="1.1.0",
+        version="1.2",
         author="Matthew Nicol",
         author_email="matthew.b.nicol@gmail.com",
         description="Read and write php arrays with python",
