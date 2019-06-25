@@ -12,7 +12,6 @@ setuptools.setup(
         description="Read and write php arrays with python",
         long_description=long_description,
         long_description_content_type="text/markdown",
-	packages=['php_whisperer'],
         url="https://github.com/matthewnicol/php_whisperer",
         packages=setuptools.find_packages(),
         classifiers=[
