@@ -33,7 +33,7 @@ def alter_source_and_read_php(php_filename, *,
     return read_php('/tmp/modphp.php', variable=variable, modify_command=modify_command)
 
 
-def read_php(php_filename, *, variable=None, modify_command=lambda x: x):
+def read_php(php_filename, *, variable=None, modify_command=lambda x: x, debug=False):
     """
     Given a php file denoted by the filename, return the array, or an array from the file.
     :type php_filename: str
@@ -45,7 +45,8 @@ def read_php(php_filename, *, variable=None, modify_command=lambda x: x):
         if not variable else
         f'@include "{php_filename}"; echo json_encode(${variable});'
     )
-    print(command)
+    if debug:
+        print(command)
     result = check_output([
         'php', 
         '-r', 
