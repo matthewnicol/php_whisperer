@@ -6,12 +6,17 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="php_whisperer",
-    version="1.4",
+    version="2.0.0",
     author="Matthew Nicol",
     author_email="matthew.b.nicol@gmail.com",
     description="Read and write php arrays with python",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    entry_points={
+        'console_scripts': [
+            'whisperer_read_stdin = php_whisperer.read_php:read_php_stdin',
+        ]
+    },
     url="https://github.com/matthewnicol/php_whisperer",
     packages=setuptools.find_packages(),
     classifiers=[
