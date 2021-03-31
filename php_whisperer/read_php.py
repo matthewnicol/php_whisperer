@@ -4,8 +4,9 @@ Tools for reading PHP arrays into python objects.
 
 import os, sys
 import io
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 import json
+import shlex
 
 
 def read_many(*php_data, variable=None, include_path=None, cwd=".", modify_command=lambda x: x):
@@ -23,22 +24,30 @@ def read_many(*php_data, variable=None, include_path=None, cwd=".", modify_comma
     command = ""
     for x in php_data:
         if isinstance(x, io.TextIOBase):
-            command = f"{command}\nif (file_exists(\"{x.name}\")) @include \"{x.name}\";"
+            command = f"{command} \n if (file_exists('{x.name}')) @include '{x.name}';"
         else:
-            command = f"{command}\n{x}"
+            command = f"{command} \n {x}"
 
+    command = f'{command} \n if(isset(${variable})) \n\t echo json_encode(${variable}); \n else \n\t echo json_encode(array());'
            
     if include_path:
         include_path = ["-d ", ",".join(include_path)]
     else:
         include_path = []
 
-    result = check_output(['php', *include_path, '-r', modify_command(command)], cwd=cwd)
+    try:
+        result = check_output(['php', *include_path, '-r', modify_command(command)])
+        
+    except CalledProcessError as err:
+        with open('/tmp/php_whisperer_command', 'w') as wf:
+            wf.write(modify_command(command))
+        print(err.output)
+        raise IOError(f"Error when executing PHP command. See generated php in /tmp/php_whisperer_command.")
 
     try:
-        return json.loads(result)
-    except:
-        # Debugging purposes
+        return json.loads(result.decode('utf-8').replace("?>", ""))
+    except Exception as err:
+        print(" ".join(['php', *include_path, '-r', modify_command(command)]))
         with open('/tmp/php_whisperer_command', 'w') as wf:
             wf.write(modify_command(command))
         raise IOError(f"Could not parse PHP into json: {result}. See generated php in /tmp/php_whisperer_command.")
