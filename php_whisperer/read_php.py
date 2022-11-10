@@ -7,7 +7,6 @@ import io
 from subprocess import check_output, CalledProcessError
 import tempfile
 import json
-import shlex
 
 
 def read_many(*php_data, variable=None, include_path=None, cwd=".", modify_command=lambda x: x):
@@ -76,9 +75,15 @@ def execute_php(data: list, *, variable=None, cwd=None, debug=False):
         for line in data:
             wf.write(line.strip())
             wf.write("\n")
-        wf.write(command)
-    result = check_output(['php', tf[1]], cwd=cwd)
+        if variable:
+            wf.write(f'echo json_encode(${variable});')
+    try:
+        result = check_output(['php', tf[1]], cwd=cwd)
+    except CalledProcessError as _:
+        sys.stderr.write("ERROR: Syntax error in code")
+        return None
     result = json.loads(result)
+    os.remove(tf[1])
     return result
 
 def read_php(php_filename, *, variable=None, cwd=None, include_path=None, modify_command=lambda x: x, debug=False):
@@ -100,17 +105,13 @@ def read_php(php_filename, *, variable=None, cwd=None, include_path=None, modify
     if debug:
         print(command)
         print(f"Include Path: {include_path}")
-    with open(php_filename, "r") as rf:
-        data = rf.read()
     tf = tempfile.mkstemp(prefix="whisperer_")
     with open(tf[1], "w") as wf:
         wf.write("<?php\n")
         wf.write(command)
     result = check_output(['php']+include_path+[tf[1]], cwd=cwd)
-    print(len(result))
     result = json.loads(result)
     os.remove(tf[1])
-    #result = check_output(['php']+include_path+['-r', command], cwd=cwd)
     return result
 
 
