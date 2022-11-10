@@ -11,6 +11,20 @@ read_php('/tmp/a_php_file.php', variable='data')
 Result:
 ```
 {'My Php Array': ['You', 'get', 'the', 'point']}
+
+### Execute Arbitrary PHP
+```
+from php_whisperer import execute_php
+python_list = execute_php([
+    "@require '/home/me/a_php_file.php'",
+    "$arr = [];",
+    "foreach ($var_from_php_file as $k => $v) {",
+    "    if (strlen($k) > 5) $arr[] = $v;",
+    "}",
+    variable="arr"
+])
+```
+
 ```
 Read many php files:
 ```

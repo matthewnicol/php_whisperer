@@ -5,6 +5,7 @@ Tools for reading PHP arrays into python objects.
 import os, sys
 import io
 from subprocess import check_output, CalledProcessError
+import tempfile
 import json
 import shlex
 
@@ -64,6 +65,22 @@ def alter_source_and_read_php(php_filename, *,
 
     return read_php('/tmp/modphp.php', variable=variable, modify_command=modify_command, debug=debug)
 
+from typing import Generic
+def execute_php(data: list, *, variable=None, cwd=None, debug=False) -> Generic([list, dict]):
+    """
+    Given raw php code, execute and return data from the file
+    :return: list|dict
+    """
+    tf = tempfile.mkstemp(prefix="whisperer_")
+    with open(tf[1], "w") as wf:
+        wf.write("<?php\n")
+        for line in data:
+            wf.write(line.strip())
+            wf.write("\n")
+        wf.write(command)
+    result = check_output(['php', tf[1]], cwd=cwd)
+    result = json.loads(result)
+    return result
 
 def read_php(php_filename, *, variable=None, cwd=None, include_path=None, modify_command=lambda x: x, debug=False):
     """
@@ -84,8 +101,19 @@ def read_php(php_filename, *, variable=None, cwd=None, include_path=None, modify
     if debug:
         print(command)
         print(f"Include Path: {include_path}")
-    result = check_output(['php']+include_path+['-r', command], cwd=cwd)
-    return json.loads(result)
+    with open(php_filename, "r") as rf:
+        data = rf.read()
+    tf = tempfile.mkstemp(prefix="whisperer_")
+    with open(tf[1], "w") as wf:
+        wf.write("<?php\n")
+        wf.write(command)
+    result = check_output(['php']+include_path+[tf[1]], cwd=cwd)
+    print(len(result))
+    result = json.loads(result)
+    os.remove(tf[1])
+    #result = check_output(['php']+include_path+['-r', command], cwd=cwd)
+    return result
+
 
 def cp_php(lhs_ref, rhs_ref):
     pass
