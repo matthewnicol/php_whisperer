@@ -76,14 +76,15 @@ def execute_php(data: list, *, variable=None, cwd=None, debug=False):
             wf.write(line.strip())
             wf.write("\n")
         if variable:
-            wf.write(f'echo json_encode(${variable});')
+            wf.write(f' echo json_encode(${variable});')
     try:
         result = check_output(['php', tf[1]], cwd=cwd)
     except CalledProcessError as _:
         sys.stderr.write("ERROR: Syntax error in code")
         return None
     result = json.loads(result)
-    os.remove(tf[1])
+    if not debug:
+        os.remove(tf[1])
     return result
 
 def read_php(php_filename, *, variable=None, cwd=None, include_path=None, modify_command=lambda x: x, debug=False):
