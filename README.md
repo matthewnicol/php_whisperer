@@ -11,7 +11,7 @@ read_php('/tmp/a_php_file.php', variable='data')
 Result:
 ```
 {'My Php Array': ['You', 'get', 'the', 'point']}
-
+```
 ### Execute Arbitrary PHP
 ```
 from php_whisperer import execute_php
