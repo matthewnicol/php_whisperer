@@ -24,22 +24,6 @@ python_list = execute_php([
     variable="arr"
 ])
 ```
-
-```
-Read many php files:
-```
-from php_whisperer import read_many
-
-file1 = open('/tmp/php_file.php')
-file2 = open('/tmp/php_file2.php')
-file3 = open('/tmp/php_file3.php')
-read_many(file1, file2, "$x = File1::doSomethingWith($something_from_file2)", file3, variable='x')
-```
-Result:
-```
-{'My Php Array': ['You', 'get', 'the', 'point']}
-```
-
 ## Write PHP
 Convert Python lists and dictionaries to PHP using generate_php
 
