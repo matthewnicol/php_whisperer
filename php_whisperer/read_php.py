@@ -65,8 +65,7 @@ def alter_source_and_read_php(php_filename, *,
 
     return read_php('/tmp/modphp.php', variable=variable, modify_command=modify_command, debug=debug)
 
-from typing import Generic
-def execute_php(data: list, *, variable=None, cwd=None, debug=False) -> Generic([list, dict]):
+def execute_php(data: list, *, variable=None, cwd=None, debug=False):
     """
     Given raw php code, execute and return data from the file
     :return: list|dict
