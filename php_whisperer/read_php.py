@@ -4,7 +4,7 @@ Tools for reading PHP arrays into python objects.
 
 import os, sys
 import io
-from subprocess import check_output, CalledProcessError
+from subprocess import PIPE, Popen, check_output, CalledProcessError
 import tempfile
 import json
 
@@ -86,6 +86,22 @@ def execute_php(data: list, *, variable=None, cwd=None, debug=False):
     if not debug:
         os.remove(tf[1])
     return result
+
+def read_raw(raw_php, variable, *, cwd=None, include_path=None, debug=False):
+    php_code = f"{raw_php}\necho json_encode(${variable});"
+    if include_path:
+        include_path = ["-d", ",".join(include_path)]
+    else:
+        include_path = []
+
+    if debug:
+        print("RAW PHP CODE:")
+        print(php_code)
+
+    p = Popen(['php'], stdout=PIPE, stdin=PIPE, stderr=PIPE, cwd=cwd)
+    result = p.communicate(input=php_code.encode())[0].decode('utf-8')
+    return json.loads(result)
+
 
 def read_php(php_filename, *, variable=None, cwd=None, include_path=None, modify_command=lambda x: x, debug=False):
     """
