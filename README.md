@@ -4,6 +4,20 @@
 ## Read PHP
 Convert PHP arrays to Python objects using read_php
 
+PHP File:
+```
+<?php
+# /tmp/a_php_file.php
+$data = [
+    "My Php Array" => [
+        "You",
+        "get",
+        "the",
+        "point"
+    ]
+];
+```
+Python Code:
 ```
 from php_whisperer import read_php
 read_php('/tmp/a_php_file.php', variable='data')
