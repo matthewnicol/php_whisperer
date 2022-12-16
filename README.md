@@ -14,15 +14,14 @@ Result:
 ```
 ### Execute Arbitrary PHP
 ```
-from php_whisperer import execute_php
-python_list = execute_php([
-    "@require '/home/me/a_php_file.php'",
-    "$arr = [];",
-    "foreach ($var_from_php_file as $k => $v) {",
-    "    if (strlen($k) > 5) $arr[] = $v;",
-    "}",
-    variable="arr"
-])
+from php_whisperer import read_raw
+
+php_code = """<?php
+
+$v = explode(" ", "You get the point");
+"""
+data = read_raw(php_code, "v")
+print(data)
 ```
 ## Write PHP
 Convert Python lists and dictionaries to PHP using generate_php
