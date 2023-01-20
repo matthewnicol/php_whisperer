@@ -64,25 +64,43 @@ def alter_source_and_read_php(php_filename, *,
 
     return read_php('/tmp/modphp.php', variable=variable, modify_command=modify_command, debug=debug)
 
-def execute_php(data: list, *, variable=None, cwd=None, debug=False):
+def execute_php(data: list, *, variable=None, is_return=False, cwd=None, debug=False):
     """
     Given raw php code, execute and return data from the file
     :return: list|dict
     """
+    if not isinstance(data, list):
+        data = [data]
     tf = tempfile.mkstemp(prefix="whisperer_")
     with open(tf[1], "w") as wf:
-        wf.write("<?php\n")
+        if not "\n".join(data).strip().startswith("<?php"):
+            wf.write("<?php\n")
         for line in data:
             wf.write(line.strip())
             wf.write("\n")
         if variable:
             wf.write(f' echo json_encode(${variable});')
+    if is_return:
+        args = [['php', '-r', f"$data = require('{tf[1]}'); echo json_encode($data);"]]
+        kwargs = {'cwd': cwd}
+    else:
+        args = [['php', tf[1]]]
+        kwargs = {'cwd': cwd}
+
     try:
-        result = check_output(['php', tf[1]], cwd=cwd)
+        result = check_output(*args, **kwargs)
     except CalledProcessError as _:
-        sys.stderr.write("ERROR: Syntax error in code")
+        if not debug:
+            os.remove(tf[1])
+        sys.stderr.write("ERROR: Syntax error in code\n")
         return None
-    result = json.loads(result)
+
+    try:
+        result = json.loads(result)
+    except:
+        sys.stderr.write("ERROR: PHP output could not be parsed by json\n")
+        result = None
+
     if not debug:
         os.remove(tf[1])
     return result
