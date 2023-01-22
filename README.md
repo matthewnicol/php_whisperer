@@ -1,4 +1,7 @@
+![PHP Whisperer](https://github.com/matthewnicol/php_whisperer/blob/master/php_whisperer.jpg?raw=true)
+
 # php_whisperer
+
 *"I heard you help people with PHP problems?" "Truth is, I help PHP with people problems."*
 
 ## Read PHP
