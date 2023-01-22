@@ -28,14 +28,18 @@ Result:
 ```
 ### Execute Arbitrary PHP
 ```
-from php_whisperer import read_raw
+from php_whisperer import execute_php
 
 php_code = """<?php
 
 $v = explode(" ", "You get the point");
 """
-data = read_raw(php_code, "v")
+data = execute_php(php_code, variable="v")
 print(data)
+```
+Result:
+```
+['You', 'get', 'the', 'point']
 ```
 ## Write PHP
 Convert Python lists and dictionaries to PHP using generate_php
